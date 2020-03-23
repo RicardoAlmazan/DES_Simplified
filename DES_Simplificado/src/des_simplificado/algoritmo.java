@@ -10,6 +10,7 @@ import java.util.Map;
  */
 public class algoritmo {
 
+    private String vectorInicializacion;
     private String clave;
     private String subclave1;
     private String subclave2;
@@ -25,6 +26,7 @@ public class algoritmo {
         this.mensajeCifrado = new ArrayList<>();
         this.mensaje = new ArrayList<>();
         this.generacionDeClaves();
+        this.vectorInicializacion = "";
     }
 
     public void setMensaje(String mensaje) {
@@ -46,9 +48,9 @@ public class algoritmo {
 
     public void setMensajeCifrado(String mensajeCifrado) {
         this.mensajeCifrado = new ArrayList<>();
-        this.mensajeCifrado.add("01110101");
+        //this.mensajeCifrado.add("01110101");
         //Para generar los bloques de 8 bits
-        /*String aux = "";
+        String aux = "";
         for (int i = 0; i < mensajeCifrado.length(); i++) {
             aux += Integer.toBinaryString(mensajeCifrado.charAt(i));
         }
@@ -58,7 +60,76 @@ public class algoritmo {
                 sub = "0" + sub;
             }
             this.mensajeCifrado.add(sub);
-        }*/
+        }
+    }
+
+    public void cifradoDescifrado(boolean opcion) {
+        //True - Cifrar / False - Descifrar
+        ArrayList<Integer> permutacionIP = new ArrayList<>();
+        permutacionIP.add(1);
+        permutacionIP.add(5);
+        permutacionIP.add(2);
+        permutacionIP.add(0);
+        permutacionIP.add(3);
+        permutacionIP.add(7);
+        permutacionIP.add(4);
+        permutacionIP.add(6);
+
+        ArrayList<Integer> permutacionIPInv = new ArrayList<>();
+        permutacionIPInv.add(3);
+        permutacionIPInv.add(0);
+        permutacionIPInv.add(2);
+        permutacionIPInv.add(4);
+        permutacionIPInv.add(6);
+        permutacionIPInv.add(1);
+        permutacionIPInv.add(7);
+        permutacionIPInv.add(5);
+        //Modo de operacion: Output-Feedback (OFB)
+        if (opcion) {
+            for (int i = 0; i < 8; i++) {
+                this.vectorInicializacion += (int) Math.floor(Math.random() * 100) % 2;
+            }
+            String ronda1 = this.rondas(1, this.vectorInicializacion);
+            String ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
+            String DES_Output = this.permutacion(ronda2, permutacionIPInv);
+
+            String aux = "";
+            for (int i = 0; i < 8; i++) {
+                aux += DES_Output.charAt(i) ^ this.mensaje.get(0).charAt(i);
+            }
+            this.mensajeCifrado.add(aux);
+
+            for (int i = 1; i < this.mensaje.size(); i++) {
+                aux = "";
+                ronda1 = this.rondas(1, this.mensajeCifrado.get(i - 1));
+                ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
+                DES_Output = this.permutacion(ronda2, permutacionIPInv);
+                for (int j = 0; j < 8; j++) {
+                    aux += DES_Output.charAt(j) ^ this.mensaje.get(i).charAt(j);
+                }
+                this.mensajeCifrado.add(aux);
+            }
+        } else {
+            String ronda1 = this.rondas(1, this.vectorInicializacion);
+            String ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
+            String DES_Output = this.permutacion(ronda2, permutacionIPInv);
+            String aux = "";
+            for (int i = 0; i < 8; i++) {
+                aux += DES_Output.charAt(i) ^ this.mensajeCifrado.get(0).charAt(i);
+            }
+            this.mensaje.add(aux);
+
+            for (int i = 1; i < this.mensajeCifrado.size(); i++) {
+                aux = "";
+                ronda1 = this.rondas(1, this.mensaje.get(i - 1));
+                ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
+                DES_Output = this.permutacion(ronda2, permutacionIPInv);
+                for (int j = 0; j < 8; j++) {
+                    aux += DES_Output.charAt(j) ^ this.mensajeCifrado.get(i).charAt(j);
+                }
+                this.mensaje.add(aux);
+            }
+        }
     }
 
     public final String claveAleatoria() {
@@ -126,51 +197,6 @@ public class algoritmo {
             p10R = this.corrimientoCircular(p10R);
         }
         this.subclave2 = this.permutacion(p10L.concat(p10R), permutacionP8);
-    }
-
-    public void cifradoDescifrado(boolean opcion) {
-        //True - Cifrar / False - Descifrar
-        ArrayList<Integer> permutacionIP = new ArrayList<>();
-        permutacionIP.add(1);
-        permutacionIP.add(5);
-        permutacionIP.add(2);
-        permutacionIP.add(0);
-        permutacionIP.add(3);
-        permutacionIP.add(7);
-        permutacionIP.add(4);
-        permutacionIP.add(6);
-
-        ArrayList<Integer> permutacionIPInv = new ArrayList<>();
-        permutacionIPInv.add(3);
-        permutacionIPInv.add(0);
-        permutacionIPInv.add(2);
-        permutacionIPInv.add(4);
-        permutacionIPInv.add(6);
-        permutacionIPInv.add(1);
-        permutacionIPInv.add(7);
-        permutacionIPInv.add(5);
-        if (opcion) {
-            for (int i = 0; i < this.mensaje.size(); i++) {
-                this.mensaje.set(i, this.permutacion(this.mensaje.get(i), permutacionIP));
-            }
-
-            for (int i = 0; i < this.mensaje.size(); i++) {
-                String ronda1 = this.rondas(1, mensaje.get(i));
-                String ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
-
-                this.mensajeCifrado.add(this.permutacion(ronda2, permutacionIPInv));
-            }
-        } else {
-            for (int i = 0; i < this.mensajeCifrado.size(); i++) {
-                this.mensajeCifrado.set(i, this.permutacion(this.mensajeCifrado.get(i), permutacionIP));
-            }
-
-            for (int i = 0; i < this.mensajeCifrado.size(); i++) {
-                String ronda1 = this.rondas(2, mensajeCifrado.get(i));
-                String ronda2 = this.rondas(1, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
-                this.mensaje.add(this.permutacion(ronda2, permutacionIPInv));
-            }
-        }
     }
 
     public String rondas(int num, String cadena) {
@@ -291,6 +317,14 @@ public class algoritmo {
 
     public ArrayList<String> getMensajeCifrado() {
         return mensajeCifrado;
+    }
+
+    public String getVectorInicializacion() {
+        return vectorInicializacion;
+    }
+
+    public void setVectorInicializacion(String vectorInicializacion) {
+        this.vectorInicializacion = vectorInicializacion;
     }
 
 }

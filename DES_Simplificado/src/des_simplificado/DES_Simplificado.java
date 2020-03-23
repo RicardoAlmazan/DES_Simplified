@@ -9,14 +9,18 @@ public class DES_Simplificado {
     public static void main(String[] args) {
         //String cadena = "Hola mundo.";
         String cadena = "½";
-        String clave = "1010000010";
+        String clave = "";
+        String vectorInicializacion = "";
 
         algoritmo des = new algoritmo(clave);
         System.out.println("Key: " + des.getClave());
+        clave = des.getClave();
         //Prueba de cifrado
         System.out.println("\n.::Cifrado::.");
         des.setMensaje(cadena);
         des.cifradoDescifrado(true);
+        vectorInicializacion = des.getVectorInicializacion();
+        System.out.println("Vector de inicializacion: " + vectorInicializacion );
         String mensajeCifrado = "";
         for (int i = 0; i < des.getMensajeCifrado().size(); i++) {
             mensajeCifrado += (char) binarioADec(Integer.parseInt(des.getMensajeCifrado().get(i)), 0);
@@ -26,9 +30,10 @@ public class DES_Simplificado {
         System.out.println("Mensaje cifrado: " + mensajeCifrado);
         
         //Prueba de descifrado
-        System.out.println("\n.::Descifrado::.");
+        System.out.println("\n.::Descifrado::. " + clave);
         des = new algoritmo(clave);
-        des.setMensajeCifrado(cadena);
+        des.setMensajeCifrado(mensajeCifrado);
+        des.setVectorInicializacion(vectorInicializacion);
         des.cifradoDescifrado(false);
         String mensajeClaro = "";
         for (int i = 0; i < des.getMensaje().size(); i++) {
