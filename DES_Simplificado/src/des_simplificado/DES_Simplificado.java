@@ -9,7 +9,7 @@ public class DES_Simplificado {
     public static void main(String[] args) {
         //String cadena = "Hola mundo.";
         String cadena = "½";
-        String clave = "";
+        String clave = "1010000010";
         String vectorInicializacion = "";
 
         algoritmo des = new algoritmo(clave);

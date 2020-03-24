@@ -89,7 +89,7 @@ public class algoritmo {
             for (int i = 0; i < 8; i++) {
                 this.vectorInicializacion += (int) Math.floor(Math.random() * 100) % 2;
             }
-            String ronda1 = this.rondas(1, this.vectorInicializacion);
+            String ronda1 = this.rondas(1, this.permutacion(this.vectorInicializacion, permutacionIP));
             String ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
             String DES_Output = this.permutacion(ronda2, permutacionIPInv);
 
@@ -110,7 +110,7 @@ public class algoritmo {
                 this.mensajeCifrado.add(aux);
             }
         } else {
-            String ronda1 = this.rondas(1, this.vectorInicializacion);
+            String ronda1 = this.rondas(1, this.permutacion(this.vectorInicializacion, permutacionIP));
             String ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
             String DES_Output = this.permutacion(ronda2, permutacionIPInv);
             String aux = "";
