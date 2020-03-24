@@ -31,8 +31,8 @@ public class algoritmo {
 
     public void setMensaje(String mensaje) {
         this.mensaje = new ArrayList<>();
-        //this.mensaje.add("10111101");
-        //Para generar los bloques de 8 bits
+        // this.mensaje.add("10111101");
+        // Para generar los bloques de 8 bits
         String aux = "";
         for (int i = 0; i < mensaje.length(); i++) {
             aux += Integer.toBinaryString(mensaje.charAt(i));
@@ -48,8 +48,8 @@ public class algoritmo {
 
     public void setMensajeCifrado(String mensajeCifrado) {
         this.mensajeCifrado = new ArrayList<>();
-        //this.mensajeCifrado.add("01110101");
-        //Para generar los bloques de 8 bits
+        // this.mensajeCifrado.add("01110101");
+        // Para generar los bloques de 8 bits
         String aux = "";
         for (int i = 0; i < mensajeCifrado.length(); i++) {
             aux += Integer.toBinaryString(mensajeCifrado.charAt(i));
@@ -64,7 +64,7 @@ public class algoritmo {
     }
 
     public void cifradoDescifrado(boolean opcion) {
-        //True - Cifrar / False - Descifrar
+        // True - Cifrar / False - Descifrar
         ArrayList<Integer> permutacionIP = new ArrayList<>();
         permutacionIP.add(1);
         permutacionIP.add(5);
@@ -84,7 +84,7 @@ public class algoritmo {
         permutacionIPInv.add(1);
         permutacionIPInv.add(7);
         permutacionIPInv.add(5);
-        //Modo de operacion: Output-Feedback (OFB)
+        // Modo de operacion: Output-Feedback (OFB)
         if (opcion) {
             for (int i = 0; i < 8; i++) {
                 this.vectorInicializacion += (int) Math.floor(Math.random() * 100) % 2;
@@ -101,7 +101,7 @@ public class algoritmo {
 
             for (int i = 1; i < this.mensaje.size(); i++) {
                 aux = "";
-                ronda1 = this.rondas(1, this.mensajeCifrado.get(i - 1));
+                ronda1 = this.rondas(1, this.permutacion(DES_Output, permutacionIP));
                 ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
                 DES_Output = this.permutacion(ronda2, permutacionIPInv);
                 for (int j = 0; j < 8; j++) {
@@ -121,7 +121,7 @@ public class algoritmo {
 
             for (int i = 1; i < this.mensajeCifrado.size(); i++) {
                 aux = "";
-                ronda1 = this.rondas(1, this.mensaje.get(i - 1));
+                ronda1 = this.rondas(1, this.permutacion(DES_Output, permutacionIP));
                 ronda2 = this.rondas(2, ronda1.substring(4, 8).concat(ronda1.substring(0, 4)));
                 DES_Output = this.permutacion(ronda2, permutacionIPInv);
                 for (int j = 0; j < 8; j++) {
@@ -184,14 +184,14 @@ public class algoritmo {
         permutacionP8.add(8);
 
         String p10 = this.permutacion(clave, permutacionP10);
-        //Separación de la clave en dos bloques, después de P10
+        // Separación de la clave en dos bloques, después de P10
         String p10L = p10.substring(0, 5);
         String p10R = p10.substring(5, 10);
-        //Se corren ambos bloques de 5 bits de forma circular
+        // Se corren ambos bloques de 5 bits de forma circular
         p10L = this.corrimientoCircular(p10L);
         p10R = this.corrimientoCircular(p10R);
         this.subclave1 = this.permutacion(p10L.concat(p10R), permutacionP8);
-        //Corrimiento circular de 2 posiciones
+        // Corrimiento circular de 2 posiciones
         for (int i = 0; i < 2; i++) {
             p10L = this.corrimientoCircular(p10L);
             p10R = this.corrimientoCircular(p10R);
@@ -203,7 +203,7 @@ public class algoritmo {
         ArrayList<Integer> permutacionExpansion = new ArrayList<>();
         ArrayList<Integer> permutacionSBoxes = new ArrayList<>();
         ArrayList<Integer> permutacionP4 = new ArrayList<>();
-        //Set valores de la permutacion E/P
+        // Set valores de la permutacion E/P
         permutacionExpansion.add(3);
         permutacionExpansion.add(0);
         permutacionExpansion.add(1);
@@ -212,22 +212,19 @@ public class algoritmo {
         permutacionExpansion.add(2);
         permutacionExpansion.add(3);
         permutacionExpansion.add(0);
-        //Primeros 2 bits indican la fila y últimos 2 la columna
+        // Primeros 2 bits indican la fila y últimos 2 la columna
         permutacionSBoxes.add(0);
         permutacionSBoxes.add(3);
         permutacionSBoxes.add(1);
         permutacionSBoxes.add(2);
-        //Permutacion P4
+        // Permutacion P4
         permutacionP4.add(1);
         permutacionP4.add(3);
         permutacionP4.add(2);
         permutacionP4.add(0);
-
         String izquierda = cadena.substring(0, 4);
         String derecha = cadena.substring(4, 8);
-
         String derechaExpandida = this.permutacion(derecha, permutacionExpansion);
-
         String auxiliar = "";
         for (int i = 0; i < derechaExpandida.length(); i++) {
             if (num == 1) {
@@ -236,15 +233,12 @@ public class algoritmo {
                 auxiliar += this.subclave2.charAt(i) ^ derechaExpandida.charAt(i);
             }
         }
-
         String auxIzq = auxiliar.substring(0, 4);
         String auxDer = auxiliar.substring(4, 8);
-
-        //El valor obtenido de las S-Boxes, que se permuta con P4
+        // El valor obtenido de las S-Boxes, que se permuta con P4
         auxiliar = this.buscarEnSBoxes(this.permutacion(auxIzq, permutacionSBoxes), false)
                 .concat(this.buscarEnSBoxes(this.permutacion(auxDer, permutacionSBoxes), true));
         auxiliar = this.permutacion(auxiliar, permutacionP4);
-
         String aux2 = "";
         for (int i = 0; i < 4; i++) {
             aux2 += auxiliar.charAt(i) ^ izquierda.charAt(i);
@@ -254,7 +248,7 @@ public class algoritmo {
 
     public String buscarEnSBoxes(String cadena, boolean opc) {
         Map<String, String> s0 = new HashMap<>(), s1 = new HashMap<>();
-        //Declaración de la s-box 0
+        // Declaración de la s-box 0
         s0.put("0000", "01");
         s0.put("0001", "00");
         s0.put("0010", "11");
@@ -275,7 +269,7 @@ public class algoritmo {
         s0.put("1110", "11");
         s0.put("1111", "10");
 
-        //S-box 1
+        // S-box 1
         s1.put("0000", "00");
         s1.put("0001", "01");
         s1.put("0010", "10");

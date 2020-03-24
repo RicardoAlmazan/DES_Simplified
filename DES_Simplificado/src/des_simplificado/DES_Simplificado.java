@@ -9,7 +9,7 @@ public class DES_Simplificado {
     public static void main(String[] args) {
         //String cadena = "Hola mundo.";
         String cadena = "½";
-        String clave = "1010000010";
+        String clave = "";
         String vectorInicializacion = "";
 
         algoritmo des = new algoritmo(clave);
@@ -30,7 +30,7 @@ public class DES_Simplificado {
         System.out.println("Mensaje cifrado: " + mensajeCifrado);
         
         //Prueba de descifrado
-        System.out.println("\n.::Descifrado::. " + clave);
+        System.out.println("\n.::Descifrado::. ");
         des = new algoritmo(clave);
         des.setMensajeCifrado(mensajeCifrado);
         des.setVectorInicializacion(vectorInicializacion);
